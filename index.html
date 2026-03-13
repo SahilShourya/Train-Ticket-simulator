@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RailX — Train Ticket Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="logo">Sahil Railway's<span>X</span> 🚆</div>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')" class="active" id="nav-home">Book Tickets</a>
+    <a href="#" onclick="showPage('pnr')" id="nav-pnr">PNR Status</a>
+    <a href="#" onclick="showPage('live')" id="nav-live">Live Trains</a>
+    <a href="#" onclick="showPage('bookings')" id="nav-bookings">My Bookings</a>
+    <a href="#" onclick="showPage('offers')" id="nav-offers">Offers</a>
+  </div>
+  <div class="nav-user">
+    <button class="btn-login" onclick="showToast('👤 Login feature coming soon!')">Login / Register</button>
+  </div>
+</nav>
+
+<!-- ===== HOME / SEARCH PAGE ===== -->
+<div id="page-home" class="page-section active">
+  <section class="hero">
+    <div class="hero-title">Book Your <span>Train Tickets</span><br>Instantly.</div>
+    <div class="hero-sub">Fast • Reliable • Real-time availability across all train classes</div>
+
+    <div class="search-tabs">
+      <button class="tab-btn active" onclick="setTripType('one-way',this)">One Way</button>
+      <button class="tab-btn" onclick="setTripType('round-trip',this)">Round Trip</button>
+      <button class="tab-btn" onclick="setTripType('multi-city',this)">Multi-City</button>
+    </div>
+
+    <div class="search-card">
+      <div class="search-grid">
+        <div class="form-group">
+          <label class="form-label">🚉 From Station</label>
+          <input class="form-input" id="from-station" list="stations" placeholder="e.g. New Delhi" value="New Delhi">
+          <datalist id="Stations">
+            <option value="New Delhi">
+            <option value="Mumbai Central">
+            <option value="Howrah Junction">
+            <option value="Chennai Central">
+            <option value="Bengaluru City">
+            <option value="Hyderabad Deccan">
+            <option value="Ahmedabad Junction">
+            <option value="Pune Junction">
+            <option value="Jaipur Junction">
+            <option value="Lucknow Junction">
+            <option value="Patna Junction">
+            <option value="Bhopal Junction">
+            <option value="Nagpur Junction">
+            <option value="Kochi">
+            <option value="Agra Cantt">
+            <option value="Varanasi Junction">
+            <option value="Jammu Tawi">
+          </datalist>
+        </div>
+
+        <button class="swap-btn" onclick="swapStations()" title="Swap stations">⇄</button>
+
+        <div class="form-group">
+          <label class="form-label">🏁 To Station</label>
+          <input class="form-input" id="to-station" list="stations" placeholder="e.g. Mumbai Central" value="Mumbai Central">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📅 Journey Date</label>
+          <input class="form-input" type="date" id="journey-date">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">👥 Passengers & Class</label>
+          <div class="passenger-selector" id="pax-selector">
+            <div class="passenger-display" onclick="togglePaxPopup()">
+              <span id="pax-display-text">1 Adult, Sleeper</span>
+              <span>▾</span>
+            </div>
+            <div class="passenger-popup hidden" id="pax-popup">
+              <div class="pax-row">
+                <div><div class="pax-label">Adults</div><div class="pax-sub">(12+ yrs)</div></div>
+                <div class="pax-counter">
+                  <button class="pax-btn" onclick="changePax('adult',-1)">−</button>
+                  <span class="pax-count" id="adult-count">1</span>
+                  <button class="pax-btn" onclick="changePax('adult',1)">+</button>
+                </div>
+              </div>
+              <div class="pax-row">
+                <div><div class="pax-label">Children</div><div class="pax-sub">(5–11 yrs)</div></div>
+                <div class="pax-counter">
+                  <button class="pax-btn" onclick="changePax('child',-1)">−</button>
+                  <span class="pax-count" id="child-count">0</span>
+                  <button class="pax-btn" onclick="changePax('child',1)">+</button>
+                </div>
+              </div>
+              <div class="pax-row">
+                <div><div class="pax-label">Infants</div><div class="pax-sub">(under 5)</div></div>
+                <div class="pax-counter">
+                  <button class="pax-btn" onclick="changePax('infant',-1)">−</button>
+                  <span class="pax-count" id="infant-count">0</span>
+                  <button class="pax-btn" onclick="changePax('infant',1)">+</button>
+                </div>
+              </div>
+              <div style="margin-top:12px">
+                <div class="form-label" style="margin-bottom:8px">Preferred Class</div>
+                <div class="class-tabs">
+                  <button class="class-tab active" onclick="selectClass('SL',this)">Sleeper</button>
+                  <button class="class-tab" onclick="selectClass('3A',this)">3 AC</button>
+                  <button class="class-tab" onclick="selectClass('2A',this)">2 AC</button>
+                  <button class="class-tab" onclick="selectClass('1A',this)">1 AC</button>
+                  <button class="class-tab" onclick="selectClass('CC',this)">Chair Car</button>
+                  <button class="class-tab" onclick="selectClass('GEN',this)">General</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="search-btn" onclick="searchTrains()">🔍 Search Trains</button>
+      </div>
+
+      <div style="margin-top:16px; display:flex; gap:16px; flex-wrap:wrap; align-items:center; border-top:1px solid var(--bg); padding-top:14px;">
+        <div style="font-size:12px; font-weight:700; color:var(--muted);">QUOTA:</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;" id="quota-btns">
+          <button class="filter-chip active" onclick="selectQuota(this,'GN')">General</button>
+          <button class="filter-chip" onclick="selectQuota(this,'LD')">Ladies</button>
+          <button class="filter-chip" onclick="selectQuota(this,'TQ')">Tatkal</button>
+          <button class="filter-chip" onclick="selectQuota(this,'PT')">Premium Tatkal</button>
+          <button class="filter-chip" onclick="selectQuota(this,'SS')">Senior Citizen</button>
+          <button class="filter-chip" onclick="selectQuota(this,'DF')">Defence</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main">
+    <div id="results-section" class="hidden">
+      <div class="results-header">
+        <div>
+          <div class="results-title" id="results-title">Trains found</div>
+          <div class="results-meta" id="results-meta"></div>
+        </div>
+        <div class="filter-bar">
+          <span style="font-size:12px; font-weight:700; color:var(--muted);">Sort:</span>
+          <button class="filter-chip active" onclick="sortResults('departure',this)">Departure</button>
+          <button class="filter-chip" onclick="sortResults('duration',this)">Duration</button>
+          <button class="filter-chip" onclick="sortResults('arrival',this)">Arrival</button>
+          <button class="filter-chip" onclick="sortResults('price',this)">Price</button>
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px;">
+        <span style="font-size:12px; font-weight:700; color:var(--muted); align-self:center;">Filter:</span>
+        <button class="filter-chip active" onclick="filterTrains('all',this)">All Trains</button>
+        <button class="filter-chip" onclick="filterTrains('rajdhani',this)">Rajdhani</button>
+        <button class="filter-chip" onclick="filterTrains('shatabdi',this)">Shatabdi</button>
+        <button class="filter-chip" onclick="filterTrains('superfast',this)">Superfast</button>
+        <button class="filter-chip" onclick="filterTrains('express',this)">Express</button>
+        <button class="filter-chip" onclick="filterTrains('available',this)">Available Only</button>
+      </div>
+      <div class="train-list" id="train-list"></div>
+    </div>
+
+    <div id="popular-section">
+      <div class="section-header">
+        <div class="section-icon">⭐</div>
+        <div>
+          <div class="section-title">Popular Routes</div>
+          <div class="section-sub">Most booked routes this week</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px;">
+        <div class="train-card" onclick="quickSearch('New Delhi','Mumbai Central')" style="cursor:pointer; padding:16px 20px;">
+          <div style="font-weight:800; font-size:15px; margin-bottom:4px;">New Delhi → Mumbai</div>
+          <div style="color:var(--muted); font-size:12px;">16 trains daily · from ₹425</div>
+          <div style="margin-top:8px; font-size:11px; background:var(--bg); border-radius:6px; padding:4px 8px; display:inline-block; font-weight:600;">🔥 Most Popular</div>
+        </div>
+        <div class="train-card" onclick="quickSearch('New Delhi','Howrah Junction')" style="cursor:pointer; padding:16px 20px;">
+          <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Delhi → Kolkata</div>
+          <div style="color:var(--muted); font-size:12px;">12 trains daily · from ₹380</div>
+        </div>
+        <div class="train-card" onclick="quickSearch('Mumbai Central','Chennai Central')" style="cursor:pointer; padding:16px 20px;">
+          <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Mumbai → Chennai</div>
+          <div style="color:var(--muted); font-size:12px;">8 trains daily · from ₹360</div>
+        </div>
+        <div class="train-card" onclick="quickSearch('Bengaluru City','Hyderabad Deccan')" style="cursor:pointer; padding:16px 20px;">
+          <div style="font-weight:800; font-size:15px; margin-bottom:4px;">Bengaluru → Hyderabad</div>
+          <div style="color:var(--muted); font-size:12px;">10 trains daily · from ₹295</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PNR STATUS PAGE ===== -->
+<div id="page-pnr" class="page-section">
+  <div class="main">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <div>
+        <div class="section-title">PNR Status</div>
+        <div class="section-sub">Check your booking status in real-time</div>
+      </div>
+    </div>
+    <div class="pnr-section">
+      <div class="alert alert-info">ℹ️ Enter your 10-digit PNR number to check status</div>
+      <label class="form-label">PNR Number</label>
+      <div class="pnr-input-row">
+        <input class="pnr-input" id="pnr-input" maxlength="10" placeholder="XXXXXXXXXX" oninput="this.value=this.value.replace(/\D/g,'')">
+        <button class="btn-primary" onclick="checkPNR()">Check Status</button>
+      </div>
+      <div style="margin-top:10px; font-size:12px; color:var(--muted);">Try: 1234567890 · 9876543210 · 5555555555</div>
+    </div>
+    <div id="pnr-result" class="hidden" style="margin-top:28px; max-width:600px; margin-left:auto; margin-right:auto;"></div>
+  </div>
+</div>
+
+<!-- ===== LIVE TRAINS PAGE ===== -->
+<div id="page-live" class="page-section">
+  <div class="main">
+    <div class="section-header">
+      <div class="section-icon">📡</div>
+      <div>
+        <div class="section-title">Live Train Tracking <span class="live-badge">● LIVE</span></div>
+        <div class="section-sub">Real-time position & delay information</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+      <input class="form-input" id="live-search" placeholder="Search train name or number..." style="max-width:300px;" oninput="filterLiveTrains()">
+      <select class="form-input" id="live-filter" onchange="filterLiveTrains()" style="max-width:180px;">
+        <option value="all">All Trains</option>
+        <option value="delayed">Delayed Only</option>
+        <option value="ontime">On Time</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="train-list" id="live-trains-list"></div>
+  </div>
+</div>
+
+<!-- ===== MY BOOKINGS PAGE ===== -->
+<div id="page-bookings" class="page-section">
+  <div class="main">
+    <div class="section-header">
+      <div class="section-icon">🎫</div>
+      <div>
+        <div class="section-title">My Bookings</div>
+        <div class="section-sub">Manage all your train bookings</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap;">
+      <button class="filter-chip active" onclick="filterBookings('all',this)">All</button>
+      <button class="filter-chip" onclick="filterBookings('upcoming',this)">Upcoming</button>
+      <button class="filter-chip" onclick="filterBookings('completed',this)">Completed</button>
+      <button class="filter-chip" onclick="filterBookings('cancelled',this)">Cancelled</button>
+    </div>
+    <div class="bookings-list" id="bookings-list"></div>
+  </div>
+</div>
+
+<!-- ===== OFFERS PAGE ===== -->
+<div id="page-offers" class="page-section">
+  <div class="main">
+    <div class="section-header">
+      <div class="section-icon">🎁</div>
+      <div>
+        <div class="section-title">Offers & Discounts</div>
+        <div class="section-sub">Save more on your next journey</div>
+      </div>
+    </div>
+    <div class="offers-grid" id="offers-grid"></div>
+  </div>
+</div>
+
+<!-- ===== BOOKING MODAL ===== -->
+<div id="booking-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-train-title">Book Ticket</div>
+        <div style="opacity:0.6; font-size:13px; margin-top:2px;" id="modal-train-subtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-steps">
+        <div class="step-item active" id="step-1"><div class="step-num">1</div> Passengers</div>
+        <div style="flex:1; height:1px; background:var(--border); align-self:center; margin:0 4px;"></div>
+        <div class="step-item" id="step-2"><div class="step-num">2</div> Seats</div>
+        <div style="flex:1; height:1px; background:var(--border); align-self:center; margin:0 4px;"></div>
+        <div class="step-item" id="step-3"><div class="step-num">3</div> Review & Pay</div>
+        <div style="flex:1; height:1px; background:var(--border); align-self:center; margin:0 4px;"></div>
+        <div class="step-item" id="step-4"><div class="step-num">4</div> Confirmation</div>
+      </div>
+
+      <!-- Step 1: Passengers -->
+      <div id="modal-step-1">
+        <div class="alert alert-info">📌 Please enter details as per government ID</div>
+        <div id="passenger-forms"></div>
+        <div style="margin-top:16px;">
+          <label class="form-label">Contact Information</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+            <input class="form-input" id="contact-name" placeholder="Full Name">
+            <input class="form-input" id="contact-phone" placeholder="Mobile Number" maxlength="10">
+          </div>
+          <input class="form-input" id="contact-email" placeholder="Email Address" style="margin-top:10px;">
+        </div>
+        <div style="margin-top:16px;">
+          <label class="form-label">GST Details (Optional)</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;">
+            <input class="form-input" placeholder="GSTIN Number">
+            <input class="form-input" placeholder="Company Name">
+          </div>
+        </div>
+        <div style="margin-top:16px;" id="tatkal-notice"></div>
+        <div class="flex justify-between" style="margin-top:24px;">
+          <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+          <button class="btn-primary" onclick="goToStep(2)">Continue to Seat Selection →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Seat Selection -->
+      <div id="modal-step-2" class="hidden">
+        <div class="seat-map">
+          <div style="font-weight:700; margin-bottom:12px; font-size:15px;">🪑 Choose Your Seats</div>
+          <div class="seat-map-legend">
+            <div class="legend-item"><div class="legend-dot avail"></div> Available</div>
+            <div class="legend-item"><div class="legend-dot booked"></div> Booked</div>
+            <div class="legend-item"><div class="legend-dot selected"></div> Selected</div>
+            <div class="legend-item"><div class="legend-dot ladies"></div> Ladies</div>
+          </div>
+          <div class="coach-selector" id="coach-selector"></div>
+          <div class="seat-grid" id="seat-grid"></div>
+          <div style="margin-top:12px; font-size:13px; color:var(--muted);" id="selected-seats-info">No seats selected</div>
+        </div>
+        <div class="alert alert-warning">⚡ Seats are held for 10 minutes. Complete booking quickly!</div>
+        <div class="flex justify-between" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
+          <button class="btn-primary" onclick="goToStep(3)">Continue to Review →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Review & Pay -->
+      <div id="modal-step-3" class="hidden">
+        <div style="background:var(--bg); border-radius:12px; padding:16px; margin-bottom:16px;">
+          <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Fare Breakdown</div>
+          <div class="fare-table" id="fare-table"></div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-weight:700; margin-bottom:10px;">Apply Offer Code</div>
+          <div style="display:flex; gap:10px;">
+            <input class="form-input" id="coupon-input" placeholder="Enter coupon code">
+            <button class="btn-secondary" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div id="coupon-result" style="margin-top:8px; font-size:13px;"></div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-weight:700; margin-bottom:10px;">Payment Method</div>
+          <div class="payment-methods" id="payment-methods">
+            <div class="pay-method" onclick="selectPayment('upi',this)">
+              <span class="pay-icon">📱</span><div><div style="font-size:13px; font-weight:700;">UPI</div><div style="font-size:11px; color:var(--muted);">GPay, PhonePe, BHIM</div></div>
+            </div>
+            <div class="pay-method" onclick="selectPayment('netbanking',this)">
+              <span class="pay-icon">🏦</span><div><div style="font-size:13px; font-weight:700;">Net Banking</div><div style="font-size:11px; color:var(--muted);">All major banks</div></div>
+            </div>
+            <div class="pay-method" onclick="selectPayment('card',this)">
+              <span class="pay-icon">💳</span><div><div style="font-size:13px; font-weight:700;">Debit/Credit Card</div><div style="font-size:11px; color:var(--muted);">Visa, Mastercard, RuPay</div></div>
+            </div>
+            <div class="pay-method" onclick="selectPayment('wallet',this)">
+              <span class="pay-icon">👛</span><div><div style="font-size:13px; font-weight:700;">Wallet</div><div style="font-size:11px; color:var(--muted);">Paytm, Amazon Pay</div></div>
+            </div>
+          </div>
+        </div>
+        <div id="upi-input" class="hidden" style="margin-bottom:16px;">
+          <label class="form-label">Enter UPI ID</label>
+          <input class="form-input" placeholder="yourname@upi" style="margin-top:6px; max-width:280px;">
+        </div>
+        <div style="background:var(--bg); border-radius:12px; padding:14px; margin-bottom:16px; font-size:13px; color:var(--muted);">
+          🔒 Your payment is secured with 256-bit SSL encryption. By proceeding, you agree to our Terms & Cancellation Policy.
+        </div>
+        <div class="flex justify-between">
+          <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+          <button class="btn-success" onclick="confirmBooking()">🎫 Confirm & Pay ₹<span id="pay-amount">0</span></button>
+        </div>
+      </div>
+
+      <!-- Step 4: Confirmation -->
+      <div id="modal-step-4" class="hidden">
+        <div style="text-align:center; margin-bottom:24px;">
+          <div style="font-size:48px; margin-bottom:8px;">🎉</div>
+          <div style="font-family:var(--font-head); font-size:24px; font-weight:800; color:var(--rail-green); margin-bottom:4px;">Booking Confirmed!</div>
+          <div style="color:var(--muted); font-size:14px;">You'll receive a confirmation on your email & SMS</div>
+        </div>
+        <div class="ticket-card" id="ticket-display"></div>
+        <div class="flex gap-4 justify-between" style="margin-top:16px; flex-wrap:wrap;">
+          <button class="btn-secondary" onclick="downloadTicket()">⬇️ Download Ticket</button>
+          <button class="btn-secondary" onclick="showToast('📧 Ticket sent to your email!')">📧 Email Ticket</button>
+          <button class="btn-primary" onclick="closeModal(); showPage('bookings')">View My Bookings</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Action completed</span>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <strong>RailX Train Ticket Simulator</strong> — A fully-featured demo project 🚆<br>
+  <span style="font-size:12px; margin-top:4px; display:block;">All data is simulated. No real booking is made. Built for educational purposes.</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
